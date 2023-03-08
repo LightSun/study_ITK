@@ -2,7 +2,7 @@
 #define NIFTISTATEMANAGER_H
 
 #include <set>
-#include "FileIO.h"
+#include "utils/FileIO.h"
 
 namespace h7 {
 

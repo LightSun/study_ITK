@@ -12,13 +12,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ITK
 #set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.2.1-Desktop_Qt_5_14_2_GCC_64bit-Release)
 set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.3.0-Desktop_Qt_5_14_2_GCC_64bit-Release)
+#set(ITK_DIR /home/heaven7/heaven7/libs/ITK/InsightToolkit-5.3.0/build)
+
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
+#include(${ITK_DIR}/ITKConfig.cmake)
 if(VTK_VERSION VERSION_LESS "8.90.0")
   include(${VTK_USE_FILE})
 endif()
-
-set(EXE_NAME test1)
 
 include_directories(${ITK_INCLUDE_DIRS})
 include_directories(${ITKVtkGlue_INCLUDE_DIRS})
@@ -28,7 +29,35 @@ set(DEP_LIBS
     ${VTK_LIBRARIES}
     ${ITK_LIBRARIES}
     )
-#ITK_LIBRARIES, ITK_LIBRARY_DIRS
+
+# h7cpp
+SET(H7CPP_DIR /home/heaven7/heaven7/env/linux/h7cpp)
+SET(H7CPP_LIB ${H7CPP_DIR}/lib/libh7cpp_shared.so)
+SET(H7CPP_INC ${H7CPP_DIR}/include)
+
+include_directories(${H7CPP_INC})
+set(DEP_LIBS ${DEP_LIBS}
+    ${H7CPP_LIB}
+    )
+
+#
+add_subdirectory(med-common/)
+add_subdirectory(mesh-smoothing/)
+
+#SET(MED_DIR med-common)
+#add_library(med-common
+#    ${MED_DIR}/med/MedFlow.hpp
+#    ${MED_DIR}/med/MedFlow.cpp
+#    ${MED_DIR}/med/main.cpp
+#    ${MED_DIR}/med/MedFlow_ctx.h
+#    ${MED_DIR}/med/MedFlow_pri.h
+#    ${MED_DIR}/med/MedThyFilterManager.h
+#    ${MED_DIR}/med/MedThyFilterManager.cpp
+#    )
+#target_link_libraries(med-common PUBLIC ${DEP_LIBS})
+
+# test
+set(EXE_NAME test1)
 
 add_executable(${EXE_NAME}
     base1/main.cpp
@@ -49,17 +78,19 @@ add_executable(${EXE_NAME}
     base1/test_curvature_anisotropic.cpp
     base1/test_curvature_anisotropic_nifti.cpp
     base1/test_curvature_flow.cpp
-    PerformanceHelper.h
-    FileIO.h
-    c_common.h
-    nifti_reader.hpp
     base1/test_curvature_preserve_edge.cpp
     base1/test_regi_vector_imgs.cpp
     base1/print_nii.cpp
     base1/test_med.cpp
     base1/test_med2.cpp
     base1/test_med_regi.cpp
+    nifti_reader.hpp
     NiftiStateManager.hpp
+
+    base1/test_vtk_smooth.cpp
+    base1/test_vtk_smooth2.cpp
+    base1/test_vtk_resample.cpp
+   # base1/test_rtk_entry.cpp
     )
 target_link_libraries(${EXE_NAME} PUBLIC ${DEP_LIBS})
 

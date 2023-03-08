@@ -7,7 +7,7 @@
 #include <itkNiftiImageIO.h>
 
 #include "test_common.h"
-#include "../PerformanceHelper.h"
+#include "utils/PerformanceHelper.h"
 
 /*
  * 二项式模糊图像滤波器
@@ -61,18 +61,19 @@ test_smoothing_binomial_blur(int argc, char * argv[])
   filter->Update();
   ph.print("BinomialBlurImageFilter");
   std::cout << "BinomialBlurImageFilter done." << std::endl;
+  itk::WriteImage(filter->GetOutput(), out_file.data());
 
-  using WritePixelType = unsigned char; //short
-  using WriteImageType = itk::Image<WritePixelType, Dimension>;
-  using RescaleFilterType = itk::RescaleIntensityImageFilter<OutputImageType, WriteImageType>;
+//  using WritePixelType = unsigned char; //short
+//  using WriteImageType = itk::Image<WritePixelType, Dimension>;
+//  using RescaleFilterType = itk::RescaleIntensityImageFilter<OutputImageType, WriteImageType>;
 
-  auto rescaler = RescaleFilterType::New();
-  rescaler->SetOutputMinimum(0);
-  rescaler->SetOutputMaximum(255);//255?
-  rescaler->SetInput(filter->GetOutput());
-  rescaler->Update();
+//  auto rescaler = RescaleFilterType::New();
+//  rescaler->SetOutputMinimum(0);
+//  rescaler->SetOutputMaximum(255);//255?
+//  rescaler->SetInput(filter->GetOutput());
+//  rescaler->Update();
 
-  itk::WriteImage(rescaler->GetOutput(), out_file.data());
+//  itk::WriteImage(rescaler->GetOutput(), out_file.data());
 
   return EXIT_SUCCESS;
 }

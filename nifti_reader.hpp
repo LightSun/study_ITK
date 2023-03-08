@@ -11,7 +11,7 @@
 #include <itkNiftiImageIO.h>
 
 #include "base1/test_common.h"
-#include "PerformanceHelper.h"
+#include "utils/PerformanceHelper.h"
 
 namespace h7 {
 
@@ -112,7 +112,7 @@ static void print_vals_u8_3(itk::Image<unsigned char, 3>::Pointer p){
         printf("set val = %d\n", *it);
         ++it;
     }
-    //0: not, 1: 结节， 3：良性, 2 :恶性
+    //0: not, 1: 结节-恶性， 2：结节-良性，3：腺体,
 }
 
 }

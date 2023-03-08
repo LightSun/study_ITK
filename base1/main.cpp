@@ -1,5 +1,6 @@
 
 #include "test_common.h"
+#include <map>
 
 extern void test_rgb_to_vtk();
 extern void test_rgb_itk();
@@ -20,10 +21,18 @@ extern int test_curvature_anisotropic_nifti(int argc, char* argv[]);
 extern int test_curvature_flow(int argc, char* argv[]);
 extern int test_curvature_preserve_edge(int argc, char* argv[]);
 
+extern int test_vtk_smooth(int argc, char* argv[]);
+extern int test_vtk_smooth2(int argc, char* argv[]);
+extern int test_vtk_resample(int argc, char* argv[]);
+
 extern int test_print_nifti(int argc, char* argv[]);
 extern int test_med(int argc, char* argv[]);
 extern int test_med2(int argc, char* argv[]);
 extern int test_med_regi(int argc, char* argv[]);
+
+extern int test_med_color(int argc, char* argv[]);
+
+extern int test_rtk_entry(int argc, char* argv[]);
 //
 typedef int (*Ptr_Func)(int argc, char* argv[]);
 
@@ -45,6 +54,9 @@ static std::map<String, Ptr_Func> sFuncs = {
 };
 
 //all itk examples in : https://examples.itk.org/src/core/common/applyafilteronlytoaspecifiedregionofanimage/documentation
+//通道抽取： extract channel
+//vtk opengl: https://blog.csdn.net/qq_21760651/article/details/123231629
+//基于C++的ITK图像分割与配准学习笔记3
 int main(int argc, char* argv[]){
     setbuf(stdout, NULL);
     if(argc >= 3){
@@ -72,7 +84,13 @@ int main(int argc, char* argv[]){
             }
         }
     }
-    test_med(argc, argv);
+    //test_rtk_entry(argc, argv);
+    test_vtk_smooth2(argc, argv);
+    //test_vtk_smooth(argc, argv);
+    //test_vtk_resample(argc, argv);
+
+    //test_med_color(argc, argv);
+    //test_med(argc, argv);
     //test_med2(argc, argv);
     //test_print_nifti(argc, argv);
     //test_med_regi(argc, argv);
