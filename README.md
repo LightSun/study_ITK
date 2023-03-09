@@ -103,6 +103,66 @@ ps: resample cost 5s+ (2次和)
 效果还不错。耗时1.53hour
 ```
 
+- VTK-smooth - rep1000-spacing4-poly_spacing(0.5)
+```
+load_nifti: thy.nii
+save_imageState: 3
+resamples >> type = 3
+ImageState >> size = 204, 147, 148
+spacing = 4, 4, 4
+apply_resample >> cost 58.41 msec
+smooth_thy >>
+apply_filter >> start -> VTK_Smooth
+pre_do_vtk_smooth >> dims = 204, 147, 148
+img_to_vtkimg >> cost 0.57 msec.
+img_to_poly >> cost 98.49 msec.
+img_to_poly bounds: (xmin,xmax, ymin,ymax, zmin,zmax) = (98.00,650.00,50.00,334.00,0.00,588.00)
+vtk_smooth >> cost 2.62 sec.
+poly bounds: (xmin,xmax, ymin,ymax, zmin,zmax) = (99.05,650.00,53.13,326.26,0.00,588.00)
+poly_to_img >> cost 11.03 sec.
+poly_to_img >> dims = 1102, 547, 1176
+vtkimg_to_itkimg >> cost 0.27 msec.
+cast_ret >> dims = 1102, 547, 1176
+cast_ret >> spacing = 0.500, 0.500, 0.500
+apply_filter >> cost 14.96 sec.
+
+restore_imageState: 3
+ImageState >> size = 816, 588, 592
+spacing = 1, 1, 1
+apply_resample >> cost 2.40 sec
+handle_fmt >> _<repeat_count> -> _1000
+save_thy >> /home/heaven7/heaven7/study/github/mine/build-study_ITK-Desktop_Qt_5_14_2_GCC_64bit-Debug/test/test7/thy_1000_4.nii
+
+```
+
+- VTK-smooth - rep1000-spacing4-poly_spacing(1)
+```
+load_nifti: thy.nii
+save_imageState: 3
+resamples >> type = 3
+ImageState >> size = 204, 147, 148
+spacing = 4, 4, 4
+apply_resample >> cost 60.69 msec
+smooth_thy >>
+apply_filter >> start -> VTK_Smooth
+pre_do_vtk_smooth >> dims = 204, 147, 148
+img_to_vtkimg >> cost 0.51 msec.
+img_to_poly >> cost 104.39 msec.
+vtk_smooth >> cost 2.64 sec.
+poly_to_img >> cost 3.71 sec.
+poly_to_img >> dims = 551, 274, 588
+vtkimg_to_itkimg >> cost 0.17 msec.
+apply_filter >> cost 6.61 sec.
+
+restore_imageState: 3
+ImageState >> size = 816, 588, 592
+spacing = 1, 1, 1
+apply_resample >> cost 2.40 sec
+handle_fmt >> _<repeat_count> -> _1000
+save_thy >> /home/heaven7/heaven7/study/github/mine/build-study_ITK-Desktop_Qt_5_14_2_GCC_64bit-Debug/test/test7/thy_1000_4.nii
+
+```
+
 
 
 
