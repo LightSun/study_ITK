@@ -98,6 +98,11 @@ apply_filter >> cost 964.93 msec.
 ps: resample cost 5s+ (2次和)
 ```
 
+- Bilateral - sigma-10.
+```
+效果还不错。耗时1.53hour
+```
+
 
 
 

@@ -68,12 +68,12 @@ int test_vtk_smooth(int argc, char* argv[])
 
     //save image
     //vtkImageWriter, vtkMetaImageWriter,vtkXMLImageDataWriter
-    vtkSmartPointer<vtkXMLImageDataWriter> meta_writer =
-            vtkSmartPointer<vtkXMLImageDataWriter>::New();
-    meta_writer->SetInputData(convertFilter->GetOutput());
-    meta_writer->SetFileName("thy_vtk.vti");
-    meta_writer->Update();
-    std::cout << "vtkXMLImageDataWriter done!" << std::endl;
+//    vtkSmartPointer<vtkXMLImageDataWriter> meta_writer =
+//            vtkSmartPointer<vtkXMLImageDataWriter>::New();
+//    meta_writer->SetInputData(convertFilter->GetOutput());
+//    meta_writer->SetFileName("thy_vtk.vti");
+//    meta_writer->Update();
+//    std::cout << "vtkXMLImageDataWriter done!" << std::endl;
 
     // Extract vtkImageData contour to vtkPolyData
     vtkNew<vtkDiscreteMarchingCubes> contour;

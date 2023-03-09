@@ -17,12 +17,13 @@ int main(int argc, char* argv[]){
     if(argc < 5){
         String dir = "/home/heaven7/heaven7/study/github/mine/"
                      "build-study_ITK-Desktop_Qt_5_14_2_GCC_64bit-Debug";
+        String order = "7";
         std::vector<String> params = {
                argv[0],
                "--out_dir",
-               dir + "/test/test1",
+               dir + "/test/test" + order,
                "--config",
-               dir + "/test/test1.prop",
+               dir + "/test/test" + order + "/test.prop",
         };
         ArgsParser ap(params);
         return ap.run(main);
@@ -53,7 +54,7 @@ int main(int argc, char* argv[]){
 static void do_flow_simple(med::MedThyFlow& flow,test::FlowParam& fp, CString dir){
     String thy_name = fp.save_thy_name + ".nii";
     //by test: down-sample spacing should be 2.
-    int space = 2;
+    int space = fp.spacing;
     flow.load_thy(thy_name);
     //
     flow.save_imageState(med::kITKFLOW_THY);

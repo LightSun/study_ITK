@@ -10,25 +10,6 @@ namespace med {
 class ImageStateManager
 {
 public:
-    struct ImageState{
-        ImageType::SizeType size;
-        ImageType::SpacingType spacing;
-        ImageType::PointType origin;
-        ImageType::DirectionType direction;
-
-        void print(){
-            std::string out;
-            HFMT_BUF_128({
-                         out += buf;
-                         }, "size = %d, %d, %d\n",
-                         (int)size[0], (int)size[1], (int)size[2]);
-            HFMT_BUF_128({
-                         out += buf;
-                         }, "spacing = %d, %d, %d\n",
-                         (int)spacing[0], (int)spacing[1], (int)spacing[2]);
-            LOGD("ImageState >> %s", out.data());
-        }
-    };
     ImageStateManager(){}
     ~ImageStateManager(){}
 

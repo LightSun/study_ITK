@@ -23,16 +23,9 @@ using ReaderType = itk::ImageFileReader<ImageType>;
 using InputImageType = ImageType;
 using OutputImageType = ImageType;
 
-struct _MedThyContext{
-    ImageType::Pointer ptr_raw;
-    ImageType::Pointer ptr_thy;
-    ImageType::Pointer ptr_nodule_good;
-    ImageType::Pointer ptr_nodule_bad;
-    ImageType_I8::Pointer ptr_merge;
-};
 #define filterM med::MedThyFilterManager::get()
 
-static inline ImageType::Pointer do_filter(MedThyContext* ctx,int flowType,
+static inline ImageType::Pointer do_filter(med::MedThyContext* ctx,int flowType,
                                  int filterType, bool onlyTwoType,
                                  med::MedThy_Param* lp);
 
@@ -55,7 +48,7 @@ DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output)
   }
 }
 
-static inline ImgPtr getImagePtrByType(MedThyContext* ctx, int flowType){
+static inline ImgPtr getImagePtrByType(med::MedThyContext* ctx, int flowType){
     ImageType::Pointer ptr_in;
     switch (flowType) {
     case med::kITKFLOW_THY:{
@@ -76,7 +69,7 @@ static inline ImgPtr getImagePtrByType(MedThyContext* ctx, int flowType){
     }
     return  ptr_in;
 }
-static inline void setImagePtrByType(MedThyContext* ctx, int flowType, ImgPtr dst){
+static inline void setImagePtrByType(med::MedThyContext* ctx, int flowType, ImgPtr dst){
     switch (flowType) {
     case med::kITKFLOW_THY:{
         ctx->ptr_thy = dst;
@@ -207,7 +200,7 @@ void MedThyFlow::resamples(int type, float* spacing, int space_count){
     outSpaces[1] = inputSpacing[1] * spacing[1];
     outSpaces[2] = inputSpacing[2] * spacing[2];
 
-    ImageStateManager::ImageState s;
+    ImageState s;
     s.size = std::move(outputSize);
     s.spacing = std::move(outSpaces);
     s.origin = ptr_img->GetOrigin();
@@ -220,14 +213,6 @@ void MedThyFlow::smooth_thy(int type,bool onlyTwoTypeValue){
     LOGD("smooth_thy >>\n");
     m_ctx->ptr_thy = do_filter(m_ctx, kITKFLOW_THY, type,
                                onlyTwoTypeValue, &m_params.thy);
-}
-
-void MedThyFlow::smooth_vtk_thy(int filter_type, bool onlyTwoTypeValue){
-    //pre: after itk resample
-    //1, itk to vtk data.
-    //2, vtk smoothing.
-    //3, vtk to itk data.
-
 }
 
 void MedThyFlow::smooth_nodules(int type,bool onlyTwoTypeValue){
@@ -337,15 +322,19 @@ void MedThyFlow::save_imageState(int type){
 }
 void MedThyFlow::restore_imageState(int type){
     LOGD("restore_imageState: %d\n", type);
-    ImageStateManager::ImageState s;
+    ImageState s;
     MED_ASSERT(m_stateM->removeState(type, &s));
     apply_resample(m_ctx, type, &s);
 }
 
 void MedThyFlow::apply_resample(MedThyContext* ctx, int type, void* ptr_s){
-    med::ImageStateManager::ImageState* s = (med::ImageStateManager::ImageState*)ptr_s;
+    ImageState* s = (med::ImageState*)ptr_s;
     s->print();
     auto ptr_img = getImagePtrByType(ctx, type);
+    if(ptr_img->GetSpacing() == s->spacing
+            && ptr_img->GetLargestPossibleRegion().GetSize() == s->size){
+        return;
+    }
     //
     h7::PerfHelper ph;
     ph.begin();
@@ -373,7 +362,7 @@ void MedThyFlow::apply_resample(MedThyContext* ctx, int type, void* ptr_s){
 }
 
 //------------------------
-static ImageType::Pointer do_filter(MedThyContext* ctx,int flowType, int filterType,
+static ImageType::Pointer do_filter(med::MedThyContext* ctx,int flowType, int filterType,
                                     bool onlyTwoType, med::MedThy_Param* lp){
     ImageType::Pointer ptr_in = getImagePtrByType(ctx, flowType);
 

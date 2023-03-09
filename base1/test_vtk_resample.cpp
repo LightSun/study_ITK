@@ -21,7 +21,7 @@
 
 #define VTK_SP vtkSmartPointer
 
-static vtkSmartPointer<vtkImageData> polyDataToImageData(vtkSmartPointer<vtkPolyData>);
+vtkSmartPointer<vtkImageData> polyDataToImageData(vtkSmartPointer<vtkPolyData>);
 static vtkSmartPointer<vtkImageData> polyDataToImageData2(vtkSmartPointer<vtkPolyData>);
 
 int test_vtk_resample(int argc, char* argv[]){
@@ -114,6 +114,7 @@ vtkSmartPointer<vtkImageData> polyDataToImageData(vtkSmartPointer<vtkPolyData> p
         dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
     }
     imageData->SetDimensions(dim);
+    //SetExtent 设置每个轴的尺寸。
     imageData->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
 
     double origin[3];

@@ -3,7 +3,9 @@
 #include "MedFlow_ctx.h"
 #include <string>
 
+namespace med {
 typedef struct _MedThyContext MedThyContext;
+}
 
 namespace med {
     enum{
@@ -38,8 +40,6 @@ namespace med {
         void resamples(int type, float* spaces, int space_count = 3);
 
         void smooth_thy(int filter_type, bool onlyTwoTypeValue);
-
-        void smooth_vtk_thy(int filter_type, bool onlyTwoTypeValue);
 
         void smooth_nodules(int filter_type, bool onlyTwoTypeValue);
 

@@ -50,7 +50,7 @@ static inline std::string filter_type_to_str(int type){
         __FT_CASE_STR(CurvatureAnisotropicDiffusion)
         __FT_CASE_STR(CurvatureFlow)
         __FT_CASE_STR(Bilateral)
-                __FT_CASE_STR(VTK_Smooth)
+        __FT_CASE_STR(VTK_Smooth)
     }
 #undef __FT_CASE_STR
     return "unknown";

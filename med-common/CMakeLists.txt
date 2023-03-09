@@ -18,6 +18,7 @@ add_library(${MED_LIB_NAME}
     med/MedThyFilterManager.cpp
     med/ImageStateManager.hpp
     med/vtk_impl.cpp
+    med/itk_impl.cpp
     )
 
 target_link_libraries(${MED_LIB_NAME} PUBLIC ${DEP_LIBS})

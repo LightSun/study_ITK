@@ -36,6 +36,7 @@ void loadConfig(CString config_file, FlowParam* fp, MedThy_Param* tp_thy,
     fp->nodules_filter_type = sFilterMap[prop.getString("flow::nodules_filter_type")];
     fp->thy_binary = prop.getBool("flow::thy_binary");
     fp->nodules_binary = prop.getBool("flow::nodules_binary");
+    fp->spacing = prop.getInt("flow::spacing", fp->spacing);
 
     fp->save_thy_name = prop.getString("flow::save_thy_name");
     fp->save_merge_name = prop.getString("flow::save_merge_name");
