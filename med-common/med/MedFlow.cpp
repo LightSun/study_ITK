@@ -216,12 +216,16 @@ void MedThyFlow::smooth_thy(int type,bool onlyTwoTypeValue){
 }
 
 void MedThyFlow::smooth_nodules(int type,bool onlyTwoTypeValue){
-    LOGD("smooth_nodules >> good.\n");
-    m_ctx->ptr_nodule_good = do_filter(m_ctx, kITKFLOW_NODULE_GOOD, type,
-                                       onlyTwoTypeValue, &m_params.nodule_good);
-    LOGD("smooth_nodules >> bad.\n");
-    m_ctx->ptr_nodule_bad = do_filter(m_ctx, kITKFLOW_NODULE_BAD, type,
-                                      onlyTwoTypeValue, &m_params.nodule_bad);
+    if(m_ctx->ptr_nodule_good){
+        LOGD("smooth_nodules >> good.\n");
+        m_ctx->ptr_nodule_good = do_filter(m_ctx, kITKFLOW_NODULE_GOOD, type,
+                                           onlyTwoTypeValue, &m_params.nodule_good);
+    }
+    if(m_ctx->ptr_nodule_bad){
+        LOGD("smooth_nodules >> bad.\n");
+        m_ctx->ptr_nodule_bad = do_filter(m_ctx, kITKFLOW_NODULE_BAD, type,
+                                          onlyTwoTypeValue, &m_params.nodule_bad);
+    }
 }
 
 void MedThyFlow::merge(){
@@ -285,12 +289,12 @@ void MedThyFlow::save_nodules(CString fn_good, CString fn_bad){
     if(m_ctx->ptr_nodule_good){
         itk::WriteImage(m_ctx->ptr_nodule_good, fn_good);
     }else{
-        _Println("dump_nodules: but ptr_nodule_good data not exist!\n");
+        _Println("save_nodules: but ptr_nodule_good data not exist!\n");
     }
     if(m_ctx->ptr_nodule_bad){
         itk::WriteImage(m_ctx->ptr_nodule_bad, fn_bad);
     }else{
-        _Println("dump_nodules: but ptr_nodule_bad data not exist!\n");
+        _Println("save_nodules: but ptr_nodule_bad data not exist!\n");
     }
 }
 void MedThyFlow::save_merge_result(CString filename){

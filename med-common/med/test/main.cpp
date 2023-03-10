@@ -6,10 +6,13 @@
 #include "common/logger.h"
 #include "test.h"
 
+#include "common/common.h"
+
 using namespace h7;
 
 static void do_flow(med::MedThyFlow& flow,test::FlowParam& fp, CString dir);
-static void do_flow_simple(med::MedThyFlow& flow,test::FlowParam& fp, CString dir);
+static void do_flow_thy(med::MedThyFlow& flow,test::FlowParam& fp, CString dir);
+static void do_flow_nodule_bad(med::MedThyFlow& flow,test::FlowParam& fp, CString dir);
 
 //--out_dir xxx --config xxx.prop
 int main(int argc, char* argv[]){
@@ -46,15 +49,17 @@ int main(int argc, char* argv[]){
     med::MedThyFlow flow(ps);
     //
     //do_flow(flow, fp, dir);
-    do_flow_simple(flow, fp, dir);
+    //do_flow_thy(flow, fp, dir);
+    do_flow_nodule_bad(flow, fp, dir);
     return 0;
 }
 
 //------------------
-static void do_flow_simple(med::MedThyFlow& flow,test::FlowParam& fp, CString dir){
+static void do_flow_thy(med::MedThyFlow& flow,test::FlowParam& fp, CString dir){
     String thy_name = fp.save_thy_name + ".nii";
-    //by test: down-sample spacing should be 2.
-    int space = fp.spacing;
+    //by test: down-sample spacing should be 2 in ITK.
+    int space = flow.getInputParams().thy.spacing;
+    MED_ASSERT_X(space > 0, "do_flow_thy: space must > 0");
     flow.load_thy(thy_name);
     //
     flow.save_imageState(med::kITKFLOW_THY);
@@ -94,6 +99,52 @@ static void do_flow_simple(med::MedThyFlow& flow,test::FlowParam& fp, CString di
     flow.save_thy(dst);
 }
 
+static void do_flow_nodule_bad(med::MedThyFlow& flow,test::FlowParam& fp, CString dir){
+    String nodule_bad_n = fp.save_nodules_name[1];
+    MedThy_Param*  mtp = &flow.getInputParams().nodule_bad;
+
+    String thy_name = nodule_bad_n + ".nii";
+    //by test: down-sample spacing should be 2.
+    int space = mtp->spacing;
+    String space_str = "_" + std::to_string(space);
+    flow.load_nodule_bad(thy_name);
+    //
+    if(space > 0){
+        flow.save_imageState(med::kITKFLOW_NODULE_BAD);
+        float spaces[3];
+        spaces[0] = space;
+        spaces[1] = space;
+        spaces[2] = space;
+        //down sample
+        flow.resamples(med::kITKFLOW_NODULE_BAD, spaces);
+    }
+
+    //smooth
+    flow.smooth_nodules(fp.nodules_filter_type, fp.nodules_binary);
+
+    //restore image state.
+    if(space > 0){
+        flow.restore_imageState(med::kITKFLOW_NODULE_BAD);//ok
+    }
+
+    //mean
+    std::vector<test::FmtItem> fmts;
+    String fmt = mtp->name_fmt;
+    if(!fmt.empty()){
+        test::fmt_parse(fmt, fmts);
+        int delta = 0;
+        for(int i = 0 ; i < (int)fmts.size() ; ++i){
+             delta += test::fmt_replace(fmt, fmts[i], mtp);
+             if(i + 1 < (int)fmts.size()){
+                fmts[i + 1].startPos += delta;
+             }
+        }
+        h7_logd("handle_fmt >> %s -> %s\n",
+                mtp->name_fmt.data(), fmt.data());
+    }
+    String dst = dir + "/" + nodule_bad_n + fmt + space_str + ".nii";
+    flow.save_nodules("not_need", dst);
+}
 
 static void do_flow(med::MedThyFlow& flow,test::FlowParam& fp, CString dir){
     flow.read_nifti(fp.nifti_path);

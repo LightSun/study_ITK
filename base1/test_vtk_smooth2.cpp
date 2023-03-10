@@ -26,6 +26,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkDiscreteMarchingCubes.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageGaussianSmooth.h>
+#include <vtkWindowedSincPolyDataFilter.h>
 
 #include "utils/PerformanceHelper.h"
 
@@ -34,6 +35,7 @@ extern vtkSmartPointer<vtkImageData> polyDataToImageData(vtkSmartPointer<vtkPoly
 static vtkSmartPointer<vtkActor> gen_actor(vtkSmartPointer<vtkPolyData>);
 static vtkSmartPointer<vtkActor> gen_actor2(vtkSmartPointer<vtkPolyData>);
 static vtkSmartPointer<vtkActor> gen_actor3(vtkSmartPointer<vtkPolyData>);
+static vtkSmartPointer<vtkActor> gen_actor4(vtkSmartPointer<vtkPolyData>);
 
 //test thy data.
 //crash: 32G内存, 700W+三角面数(300W+顶点).
@@ -59,6 +61,7 @@ int test_vtk_smooth2(int argc, char* argv[])
 
     vtkSmartPointer<vtkActor> loopActor = gen_actor2(orig);
     vtkSmartPointer<vtkActor> resampleActor = gen_actor3(orig);
+    vtkSmartPointer<vtkActor> sincActor = gen_actor4(orig);
     //
     double ltView[4] = { 0, 0, 0.5, 0.5 };
     double rtView[4] = { 0.5, 0, 1, 0.5 };
@@ -83,13 +86,18 @@ int test_vtk_smooth2(int argc, char* argv[])
     resampleRender->AddActor(resampleActor);
     resampleRender->SetBackground(0, 1, 0);
 
+    vtkSmartPointer<vtkRenderer> sincRender =
+        vtkSmartPointer<vtkRenderer>::New();
+    sincRender->SetViewport(rbView);
+    sincRender->AddActor(sincActor);
+    sincRender->SetBackground(0, 0.5, 0.5);
     //
     vtkSmartPointer<vtkRenderWindow> rw =
         vtkSmartPointer<vtkRenderWindow>::New();
     rw->AddRenderer(origRender);
     rw->AddRenderer(resampleRender);
     rw->AddRenderer(loopRender);
-   // rw->AddRenderer(butterflyRender);
+    rw->AddRenderer(sincRender);
     rw->SetSize(800, 600);
     rw->SetWindowName("PolyData Subdivision");
 
@@ -99,8 +107,10 @@ int test_vtk_smooth2(int argc, char* argv[])
     origRender->GetActiveCamera()->Azimuth(30);
     origRender->GetActiveCamera()->Elevation(30);
     origRender->ResetCamera();//刷新照相机
+    //sync camera with origRender
     loopRender->SetActiveCamera(origRender->GetActiveCamera());
     resampleRender->SetActiveCamera(origRender->GetActiveCamera());
+    sincRender->SetActiveCamera(origRender->GetActiveCamera());
 
     vtkSmartPointer<vtkRenderWindowInteractor> rwi =
         vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -110,6 +120,29 @@ int test_vtk_smooth2(int argc, char* argv[])
 
     return 0;
 }
+vtkSmartPointer<vtkActor> gen_actor4(vtkSmartPointer<vtkPolyData> _orig){
+    h7::PerfHelper ph;
+    ph.begin();
+   // using FilterType = vtkSmartPointer<vtkWindowedSincPolyDataFilter>;
+    using FilterType = vtkSmartPointer<vtkSmoothPolyDataFilter>;
+    auto filter = FilterType::New();
+    filter->SetInputData(_orig);
+    //filter->SetFeatureEdgeSmoothing(true);
+    //filter->SetBoundarySmoothing(true);
+    filter->SetNumberOfIterations(5000);
+    filter->Update();
+    ph.print("gen_actor4");
+
+    //add to actor for render
+    vtkSmartPointer<vtkPolyDataMapper> mapper =
+        vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputData(filter->GetOutput());
+    vtkSmartPointer<vtkActor> loopActor =
+        vtkSmartPointer<vtkActor>::New();
+    loopActor->SetMapper(mapper);
+    return loopActor;
+}
+
 //问题：多边形平滑后，图像大小改变（polyDataToImageData）。
 //为了保持原来大小，vtk重采样后没有那么光滑了。
 vtkSmartPointer<vtkActor> gen_actor3(vtkSmartPointer<vtkPolyData> _orig){

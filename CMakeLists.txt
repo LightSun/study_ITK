@@ -43,6 +43,7 @@ set(DEP_LIBS ${DEP_LIBS}
 #
 add_subdirectory(med-common/)
 add_subdirectory(mesh-smoothing/)
+add_subdirectory(study_VTK/)
 
 #SET(MED_DIR med-common)
 #add_library(med-common

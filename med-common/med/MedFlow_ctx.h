@@ -7,6 +7,7 @@
 namespace med {
 
 struct MedThy_Param{
+    int spacing {0};
     int thread_count {8};
     int repeat_count {1}; // the iterate count
     float sigma {3};
@@ -15,6 +16,7 @@ struct MedThy_Param{
     float variance {3};
     float conductance {3};
     float time_step {0};
+    float poly2img_spacing {1};
 
     int direction {-1}; //0 means 'x-axis', 1 mean y-axis
     float directionTolerance {-1};
@@ -69,6 +71,7 @@ static inline std::string med_thy_param_format(MedThy_Param* p,
     __REG_X(direction);
     __REG_X(directionTolerance);
     __REG_X(secondOrder);
+    __REG_X(poly2img_spacing);
 #undef __REG_X
     return map[name];
 }

@@ -162,6 +162,33 @@ handle_fmt >> _<repeat_count> -> _1000
 save_thy >> /home/heaven7/heaven7/study/github/mine/build-study_ITK-Desktop_Qt_5_14_2_GCC_64bit-Debug/test/test7/thy_1000_4.nii
 
 ```
+- VTK-smooth - rep1000-spacing6-poly_spacing(1)
+```
+load_nifti: thy.nii
+save_imageState: 3
+resamples >> type = 3
+ImageState >> size = 136, 98, 98
+spacing = 6, 6, 6
+apply_resample >> cost 17.49 msec
+smooth_thy >>
+apply_filter >> start -> VTK_Smooth
+pre_do_vtk_smooth >> dims = 136, 98, 98
+img_to_vtkimg >> cost 0.46 msec.
+img_to_poly >> cost 31.08 msec.
+vtk_smooth >> cost 671.69 msec.
+poly_to_img >> cost 1.54 sec.
+poly_to_img >> dims = 551, 273, 582
+vtkimg_to_itkimg >> cost 0.16 msec.
+apply_filter >> cost 2.38 sec.
+
+restore_imageState: 3
+ImageState >> size = 816, 588, 592
+spacing = 1, 1, 1
+apply_resample >> cost 2.37 sec
+handle_fmt >> _<repeat_count>_<poly2img_spacing> -> _1000_1.000000
+save_thy >> /home/heaven7/heaven7/study/github/mine/build-study_ITK-Desktop_Qt_5_14_2_GCC_64bit-Debug/test/test7/thy_1000_1.000000_6.nii
+
+```
 
 
 

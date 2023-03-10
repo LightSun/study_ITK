@@ -36,7 +36,6 @@ void loadConfig(CString config_file, FlowParam* fp, MedThy_Param* tp_thy,
     fp->nodules_filter_type = sFilterMap[prop.getString("flow::nodules_filter_type")];
     fp->thy_binary = prop.getBool("flow::thy_binary");
     fp->nodules_binary = prop.getBool("flow::nodules_binary");
-    fp->spacing = prop.getInt("flow::spacing", fp->spacing);
 
     fp->save_thy_name = prop.getString("flow::save_thy_name");
     fp->save_merge_name = prop.getString("flow::save_merge_name");
@@ -53,9 +52,12 @@ void loadConfig(CString config_file, FlowParam* fp, MedThy_Param* tp_thy,
     tp_thy->conductance = prop.getFloat("thy::conductance", tp_thy->conductance);
     tp_thy->directionTolerance = prop.getFloat("thy::directionTolerance",
                                                tp_thy->directionTolerance);
+    tp_thy->poly2img_spacing = prop.getFloat("thy::poly2img_spacing",
+                                               tp_thy->poly2img_spacing);
 
     tp_thy->secondOrder = prop.getBool("thy::secondOrder");
     tp_thy->name_fmt = prop.getString("thy::name_fmt");
+    tp_thy->spacing = prop.getInt("thy::spacing", tp_thy->spacing);
     //nodule
     tp_nodule->thread_count = prop.getInt("nodules::thread_count", tp_nodule->thread_count);
     tp_nodule->repeat_count = prop.getInt("nodules::repeat_count", tp_nodule->repeat_count);
@@ -68,8 +70,12 @@ void loadConfig(CString config_file, FlowParam* fp, MedThy_Param* tp_thy,
     tp_nodule->conductance = prop.getFloat("nodules::conductance", tp_nodule->conductance);
     tp_nodule->directionTolerance = prop.getFloat("nodules::directionTolerance",
                                                tp_nodule->directionTolerance);
+    tp_nodule->poly2img_spacing = prop.getFloat("thy::poly2img_spacing",
+                                               tp_nodule->poly2img_spacing);
 
     tp_nodule->secondOrder = prop.getBool("nodules::secondOrder");
+    tp_nodule->name_fmt = prop.getString("nodules::name_fmt");
+    tp_nodule->spacing = prop.getInt("nodules::spacing", tp_nodule->spacing);
 }
 
 //return next start position

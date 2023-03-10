@@ -53,6 +53,9 @@ namespace med {
         void load_thy(CString filename){
             load_nifti(kITKFLOW_THY, filename);
         }
+        void load_nodule_bad(CString filename){
+            load_nifti(kITKFLOW_NODULE_BAD, filename);
+        }
         void save_imageState(int type);
         void restore_imageState(int type);
     private:

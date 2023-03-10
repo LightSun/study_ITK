@@ -18,8 +18,6 @@ struct FlowParam{
     String nifti_path;
     int thy_filter_type;
     int nodules_filter_type;
-    int spacing {2};
-    //float poly_to_img_spacing {0.5};
     bool thy_binary {true};
     bool nodules_binary {true};
     String save_thy_name;

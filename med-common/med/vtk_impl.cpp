@@ -29,7 +29,7 @@ static inline void printBounds(CString tag, double* bounds){
 }
 
 static vtkSmartPointer<vtkImageData> polyDataToImageData(
-        vtkSmartPointer<vtkPolyData> polydata, double* spacing);
+        vtkSmartPointer<vtkPolyData> polydata, double* spacing, float poly_spacing);
 static vtkSmartPointer<vtkImageData> vtk_resample(
         vtkSmartPointer<vtkImageData> data, double* spacing, int* sizes);
 
@@ -80,8 +80,8 @@ ImgPtr do_vtk_smooth(ImgPtr ptr, med::MedThy_Param* param){
     ph.print("vtk_smooth");
 
     //poly data to image data.
-    vtkSmartPointer<vtkImageData> img_data =
-            polyDataToImageData(filter->GetOutput(), spacing);
+    vtkSmartPointer<vtkImageData> img_data = polyDataToImageData(
+                filter->GetOutput(), spacing, param->poly2img_spacing);
     ph.print("poly_to_img");
     img_data->GetDimensions(_dims);
     printDims("poly_to_img",_dims);
@@ -130,15 +130,14 @@ ImgPtr do_vtk_smooth(ImgPtr ptr, med::MedThy_Param* param){
     }
 }
 
-vtkSmartPointer<vtkImageData> polyDataToImageData(vtkSmartPointer<vtkPolyData>
-                                                  polydata, double* _spacing){
+vtkSmartPointer<vtkImageData> polyDataToImageData(
+        vtkSmartPointer<vtkPolyData>polydata, double* _spacing, float poly_spacing){
+
     vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
     double bounds[6];
     polydata->GetBounds(bounds);
     // desired volume spacing
-#define PLOY_SPACING 1
-    double spacing[3] = {PLOY_SPACING, PLOY_SPACING, PLOY_SPACING};
-#undef PLOY_SPACING
+    double spacing[3] = {poly_spacing, poly_spacing, poly_spacing};
     imageData->SetSpacing(spacing);
 
     // compute dimensions
