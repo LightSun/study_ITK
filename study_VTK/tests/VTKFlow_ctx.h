@@ -1,4 +1,4 @@
-#ifndef VTK_CTX_H
+﻿#ifndef VTK_CTX_H
 #define VTK_CTX_H
 
 #include <vector>
@@ -7,6 +7,7 @@
 template <class T>
 class vtkSmartPointer;
 class vtkActor;
+class vtkPolyData;
 
 namespace h7 {
     enum{

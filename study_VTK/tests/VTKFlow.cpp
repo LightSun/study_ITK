@@ -1,7 +1,10 @@
-#include "VTKFlow.h"
+﻿#include "VTKFlow.h"
 #include "VTKFlow_pri.h"
 
 #include <vtkRendererCollection.h>
+#include <vtkNamedColors.h>
+#include <vtkNew.h>
+#include <vtkProperty.h>
 
 #include <math.h>
 
@@ -25,6 +28,59 @@ static inline void min_square(unsigned int src, int out[2]){
 }
 
 namespace h7 {
+
+vtkSmartPointer<vtkActor> VTKFlow::newActor(vtkSmartPointer<vtkPolyData> data, CString color){
+    vtkNew<vtkPolyDataMapper> mapper;
+    mapper->SetInputData(data);
+    mapper->Update();
+    // std::array<unsigned char, 4> bkg{{26, 51, 102, 255}};
+    // colors->SetColor("BkgColor", bkg.data());
+    vtkNew<vtkNamedColors> colors;
+    // The actor is a grouping mechanism: besides the geometry (mapper), it
+    // also has a property, transformation matrix, and/or texture map.
+    // Here we set its color and rotate it around the X and Y axes.
+    vtkSmartPointer<vtkActor> cylinderActor = vtkSmartPointer<vtkActor>::New();
+    cylinderActor->SetMapper(mapper);
+    cylinderActor->GetProperty()->SetColor(
+        colors->GetColor4d(color).GetData());
+    //cylinderActor->RotateX(30.0);
+    //cylinderActor->RotateY(-45.0);
+    return cylinderActor;
+}
+
+void VTKFlow::show(vtkSmartPointer<vtkActor> actor){
+    vtkNew<vtkNamedColors> colors;
+
+     // Set the background color.
+     std::array<unsigned char, 4> bkg{{26, 51, 102, 255}};
+     colors->SetColor("BkgColor", bkg.data());
+    // The renderer generates the image
+    // which is then displayed on the render window.
+    // It can be thought of as a scene to which the actor is added
+    vtkNew<vtkRenderer> renderer;
+    renderer->AddActor(actor);
+    renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
+    // Zoom in a little by accessing the camera and invoking its "Zoom" method.
+    renderer->ResetCamera();
+    renderer->GetActiveCamera()->Zoom(1.5);
+
+    // The render window is the actual GUI window
+    // that appears on the computer screen
+    vtkNew<vtkRenderWindow> renderWindow;
+    renderWindow->SetSize(300, 300);
+    renderWindow->AddRenderer(renderer);
+    renderWindow->SetWindowName("Cylinder");
+
+    // The render window interactor captures mouse events
+    // and will perform appropriate camera or actor manipulation
+    // depending on the nature of the events.
+    vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+
+    // This starts the event loop and as a side effect causes an initial render.
+    renderWindow->Render();
+    renderWindowInteractor->Start();
+}
 
 void VTKFlow::show(const std::vector<vtkSmartPointer<vtkActor>> &actors){
     MED_ASSERT(actors.size() > 1);

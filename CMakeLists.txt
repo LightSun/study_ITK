@@ -1,18 +1,36 @@
-cmake_minimum_required(VERSION 3.5)
+﻿cmake_minimum_required(VERSION 3.5)
 
 project(study_ITK LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+#Cmake command line too long
+if(WIN32)
+    SET(CMAKE_C_USE_RESPONSE_FILE_FOR_OBJECTS 1)
+    SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 1)
+
+    SET(CMAKE_C_RESPONSE_FILE_LINK_FLAG "@")
+    SET(CMAKE_CXX_RESPONSE_FILE_LINK_FLAG "@")
+    #ninja
+    SET(CMAKE_NINJA_FORCE_RESPONSE_FILE 1 CACHE INTERNAL "")
+endif(WIN32)
+
 # VTK
 #set(VTK_DIR /home/heaven7/heaven7/libs/ITK/VTK-9.2.6/build)
 #find_package(VTK REQUIRED)
 
 # ITK
-#set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.2.1-Desktop_Qt_5_14_2_GCC_64bit-Release)
-set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.3.0-Desktop_Qt_5_14_2_GCC_64bit-Release)
-#set(ITK_DIR /home/heaven7/heaven7/libs/ITK/InsightToolkit-5.3.0/build)
+set(ITK_DIR)
+if(WIN32)
+    set(ITK_DIR D:/study/cpp/ITK/InsightToolkit-5.3.0/build)
+    #SET(VTK_DIR D:/study/cpp/ITK/VTK-9.2.6/build)
+elseif(UNIX)
+    #set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.2.1-Desktop_Qt_5_14_2_GCC_64bit-Release)
+    set(ITK_DIR /home/heaven7/heaven7/libs/ITK/build-InsightToolkit-5.3.0-Desktop_Qt_5_14_2_GCC_64bit-Release)
+    #set(ITK_DIR /home/heaven7/heaven7/libs/ITK/InsightToolkit-5.3.0/build)
+else()
+endif()
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
@@ -33,6 +51,10 @@ set(DEP_LIBS
 # h7cpp
 SET(H7CPP_DIR /home/heaven7/heaven7/env/linux/h7cpp)
 SET(H7CPP_LIB ${H7CPP_DIR}/lib/libh7cpp_shared.so)
+if(WIN32)
+   SET(H7CPP_DIR D:/study/cpp/ENV/h7cpp)
+   SET(H7CPP_LIB ${H7CPP_DIR}/lib/libh7cpp_shared.dll.a)
+endif(WIN32)
 SET(H7CPP_INC ${H7CPP_DIR}/include)
 
 include_directories(${H7CPP_INC})
